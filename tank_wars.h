@@ -27,7 +27,15 @@ namespace m1
         void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
         void OnWindowResize(int width, int height) override;
 
-     private:
+        void CreateTerrain();
 
+     private:
+         const glm::vec4 bgColor = { 0.251f, 0.722f, 1, 1 };
+
+         const glm::vec3 terrainColor = { 0.3f, 0.55f, 0.03f };
+         const int terrainOffset = 30;
+         const int terrainStep = 10;
+         std::vector<VertexFormat> terrainVertices;
+         std::vector<float *> heightMap;
     };
 }   // namespace m1
