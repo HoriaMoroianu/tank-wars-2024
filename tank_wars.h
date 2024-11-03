@@ -37,5 +37,7 @@ namespace m1
          const int terrainStep = 10;
          std::vector<VertexFormat> terrainVertices;
          std::vector<float *> heightMap;
+
+         glm::vec2 sc{ 20, 20 };
     };
 }   // namespace m1

@@ -43,6 +43,76 @@ void TankWars::CreateTerrain()
     AddMeshToList(terrain);
 }
 
+Mesh* CreateTrapeze(const glm::vec3 color)
+{
+    std::vector<VertexFormat> vertices
+    {
+        VertexFormat(glm::vec3(-1, -0.25f, 0), color),
+        VertexFormat(glm::vec3(-0.5f, -0.25f, 0), color),
+
+        VertexFormat(glm::vec3(0.5f, -0.25f, 0), color),
+        VertexFormat(glm::vec3(1, -0.25f, 0), color),
+
+        VertexFormat(glm::vec3(0.5f, 0.25f, 0), color),
+        VertexFormat(glm::vec3(-0.5f, 0.25f, 0), color)
+    };
+    std::vector<unsigned int> indices
+    {
+        0, 1, 5,
+        1, 2, 4,
+        2, 3, 4,
+        4, 5, 1
+    };
+
+    Mesh* trapeze = new Mesh("trapeze");
+    trapeze->SetDrawMode(GL_TRIANGLES);
+    trapeze->InitFromData(vertices, indices);
+    return trapeze;
+}
+
+Mesh* CreateCircle(const glm::vec3 color, const int subdivisions = 15)
+{
+    std::vector<VertexFormat> vertices;
+    std::vector<unsigned int> indices;
+
+    vertices.push_back(VertexFormat(glm::vec3{0, 0, 0}, color));
+    indices.push_back(0);
+
+    for (int i = 0; i < subdivisions; i++) {
+        indices.push_back(i + 1);
+
+        float angle = i * 2 * M_PI / subdivisions;
+        vertices.push_back(VertexFormat(glm::vec3(cos(angle), sin(angle), 0), color));
+    }
+    indices.push_back(1);
+
+    Mesh* circle = new Mesh("circle");
+    circle->SetDrawMode(GL_TRIANGLE_FAN);
+    circle->InitFromData(vertices, indices);
+    return circle;
+}
+
+Mesh* CreateSquare(const glm::vec3 color)
+{
+    std::vector<VertexFormat> vertices
+    {
+        VertexFormat(glm::vec3(-0.5f, -0.5f, 0), color),
+        VertexFormat(glm::vec3(0.5f, -0.5f, 0), color),
+        VertexFormat(glm::vec3(0.5f, 0.5f, 0), color),
+        VertexFormat(glm::vec3(-0.5f, 0.5f, 0), color)
+    };
+    std::vector<unsigned int> indices
+    {
+        0, 1, 2,
+        2, 3, 0
+    };
+
+    Mesh* square = new Mesh("square");
+    square->SetDrawMode(GL_TRIANGLES);
+    square->InitFromData(vertices, indices);
+    return square;
+}
+
 
 void TankWars::Init()
 {
@@ -54,7 +124,12 @@ void TankWars::Init()
     camera->Update();
     GetCameraInput()->SetActive(false);
 
+    AddMeshToList(CreateTrapeze(glm::vec3(1, 0, 0)));
+    AddMeshToList(CreateCircle(glm::vec3(1, 0, 0)));
+    AddMeshToList(CreateSquare(glm::vec3(1, 0, 0)));
+
     CreateTerrain();
+    // TODO: for tank: body -> head -> base -> gun
 }
 
 
@@ -73,6 +148,13 @@ void TankWars::FrameStart()
 void TankWars::Update(float deltaTimeSeconds)
 {
     RenderMesh2D(meshes["terrain"], shaders["VertexColor"], glm::mat3(1));
+    //RenderMesh2D(meshes["circle"], shaders["VertexColor"], transform2D::Scale(30));
+
+    glm::mat3 modelMatrix = glm::mat3(1);
+    modelMatrix *= transform2D::Translate(500, 350);
+    modelMatrix *= transform2D::Scale(sc.x, sc.y);
+    //modelMatrix *= transform2D::Scale(10);
+    RenderMesh2D(meshes["square"], shaders["VertexColor"], modelMatrix);
 }
 
 
@@ -83,6 +165,20 @@ void TankWars::FrameEnd()
 
 void TankWars::OnInputUpdate(float deltaTime, int mods)
 {
+    float speed = 100;
+    if (window->KeyHold(GLFW_KEY_W)) {
+        sc.y += speed * deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_S)) {
+        sc.y -= speed * deltaTime;
+    }
+
+    if (window->KeyHold(GLFW_KEY_D)) {
+        sc.x += speed * deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_A)) {
+        sc.x -= speed * deltaTime;
+    }
 }
 
 
