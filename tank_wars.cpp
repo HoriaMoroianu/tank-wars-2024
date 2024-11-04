@@ -43,34 +43,28 @@ void TankWars::CreateTerrain()
     AddMeshToList(terrain);
 }
 
-Mesh* CreateTrapeze(const glm::vec3 color)
+Mesh* CreateTrapeze(const std::string name, const glm::vec3 color)
 {
     std::vector<VertexFormat> vertices
     {
         VertexFormat(glm::vec3(-1, -0.25f, 0), color),
-        VertexFormat(glm::vec3(-0.5f, -0.25f, 0), color),
-
-        VertexFormat(glm::vec3(0.5f, -0.25f, 0), color),
         VertexFormat(glm::vec3(1, -0.25f, 0), color),
-
-        VertexFormat(glm::vec3(0.5f, 0.25f, 0), color),
-        VertexFormat(glm::vec3(-0.5f, 0.25f, 0), color)
+        VertexFormat(glm::vec3(0.75f, 0.25f, 0), color),
+        VertexFormat(glm::vec3(-0.75f, 0.25f, 0), color)
     };
     std::vector<unsigned int> indices
     {
-        0, 1, 5,
-        1, 2, 4,
-        2, 3, 4,
-        4, 5, 1
+        0, 1, 2,
+        2, 3, 0
     };
 
-    Mesh* trapeze = new Mesh("trapeze");
+    Mesh* trapeze = new Mesh(name);
     trapeze->SetDrawMode(GL_TRIANGLES);
     trapeze->InitFromData(vertices, indices);
     return trapeze;
 }
 
-Mesh* CreateCircle(const glm::vec3 color, const int subdivisions = 15)
+Mesh* CreateCircle(const std::string name, const glm::vec3 color, const int subdivisions = 15)
 {
     std::vector<VertexFormat> vertices;
     std::vector<unsigned int> indices;
@@ -86,13 +80,13 @@ Mesh* CreateCircle(const glm::vec3 color, const int subdivisions = 15)
     }
     indices.push_back(1);
 
-    Mesh* circle = new Mesh("circle");
+    Mesh* circle = new Mesh(name);
     circle->SetDrawMode(GL_TRIANGLE_FAN);
     circle->InitFromData(vertices, indices);
     return circle;
 }
 
-Mesh* CreateSquare(const glm::vec3 color)
+Mesh* CreateSquare(const std::string name, const glm::vec3 color)
 {
     std::vector<VertexFormat> vertices
     {
@@ -107,7 +101,7 @@ Mesh* CreateSquare(const glm::vec3 color)
         2, 3, 0
     };
 
-    Mesh* square = new Mesh("square");
+    Mesh* square = new Mesh(name);
     square->SetDrawMode(GL_TRIANGLES);
     square->InitFromData(vertices, indices);
     return square;
@@ -124,12 +118,16 @@ void TankWars::Init()
     camera->Update();
     GetCameraInput()->SetActive(false);
 
-    AddMeshToList(CreateTrapeze(glm::vec3(1, 0, 0)));
-    AddMeshToList(CreateCircle(glm::vec3(1, 0, 0)));
-    AddMeshToList(CreateSquare(glm::vec3(1, 0, 0)));
-
     CreateTerrain();
+
     // TODO: for tank: body -> head -> base -> gun
+    AddMeshToList(CreateTrapeze("tank_base", glm::vec3(0.29f, 0.251f, 0.184f)));
+    AddMeshToList(CreateTrapeze("tank_body", glm::vec3(0.388f, 0.337f, 0.243f)));
+    AddMeshToList(CreateCircle("tank_gun", glm::vec3(0.388f, 0.337f, 0.243f), 31));
+    AddMeshToList(CreateSquare("tank_nose", glm::vec3(0, 0, 0)));
+
+
+    AddMeshToList(CreateCircle("origin", glm::vec3(1, 0.5f, 0)));
 }
 
 
@@ -147,14 +145,61 @@ void TankWars::FrameStart()
 
 void TankWars::Update(float deltaTimeSeconds)
 {
-    RenderMesh2D(meshes["terrain"], shaders["VertexColor"], glm::mat3(1));
-    //RenderMesh2D(meshes["circle"], shaders["VertexColor"], transform2D::Scale(30));
+    //RenderMesh2D(meshes["terrain"], shaders["VertexColor"], glm::mat3(1));
 
-    glm::mat3 modelMatrix = glm::mat3(1);
-    modelMatrix *= transform2D::Translate(500, 350);
+    glm::mat3 originMatrix = transform2D::Translate(window->GetResolution().x / 2, window->GetResolution().y / 2);
+    //glm::mat3 originMatrix = transform2D::Translate(300, 200);
+    float tScale = 150.f;
+
+    RenderMesh2D(meshes["origin"], shaders["VertexColor"], originMatrix * transform2D::Scale(3.5f));
+
+    RenderMesh2D(meshes["origin"], shaders["VertexColor"], originMatrix 
+        * transform2D::Translate(0, 0.5f * tScale) * transform2D::Scale(3.5f));
+
+    glm::mat3 tankScale = transform2D::Scale(tScale);
+    glm::mat3 modelMatrix{};
+
+    // Tank Nose
+    modelMatrix = glm::mat3(1.0f);
+    modelMatrix *= originMatrix;                                    // translatare oriunde in spatiul logic
+    modelMatrix *= tankScale;                                       // scalare cu dimensiunea tancului
+    //modelMatrix *= transform2D::Translate(0, -0.125f * tScale);      // translatare la locul potrivit
+
+    //modelMatrix *= transform2D::Translate(0, -0.5f * tScale);
+    //modelMatrix *= transform2D::Rotate(-M_PI / 4);                       // rotatie 180
+    //modelMatrix *= transform2D::Translate(0, 0.5f * tScale);
+
+    //modelMatrix *= transform2D::Scale(0.1f, 1.25f);
+    modelMatrix *= transform2D::Translate(0, 1);
     modelMatrix *= transform2D::Scale(sc.x, sc.y);
-    //modelMatrix *= transform2D::Scale(10);
-    RenderMesh2D(meshes["square"], shaders["VertexColor"], modelMatrix);
+    RenderMesh2D(meshes["tank_nose"], shaders["VertexColor"], modelMatrix);
+
+    // Tank Body
+    modelMatrix = glm::mat3(1.0f);
+    modelMatrix *= originMatrix;                                    // translatare oriunde in spatiul logic
+    modelMatrix *= transform2D::Translate(0, 0.375f * tScale);      // translatare la locul potrivit
+    modelMatrix *= tankScale;                                       // scalare cu dimensiunea tancului
+    modelMatrix *= transform2D::Scale(1.25f, 0.75f);
+    RenderMesh2D(meshes["tank_body"], shaders["VertexColor"], modelMatrix);
+
+    // Tank Base
+    modelMatrix = glm::mat3(1.0f);
+    modelMatrix *= originMatrix;                                    // translatare oriunde in spatiul logic
+    modelMatrix *= transform2D::Translate(0, 0.125f * tScale);      // translatare la locul potrivit
+    modelMatrix *= transform2D::Rotate(M_PI);                       // rotatie 180
+    modelMatrix *= tankScale;                                       // scalare cu dimensiunea tancului
+    modelMatrix *= transform2D::Scale(1, 0.5f);                     // turtire
+    RenderMesh2D(meshes["tank_base"], shaders["VertexColor"], modelMatrix);
+
+    // Tank Head
+    modelMatrix = glm::mat3(1.0f);
+    modelMatrix *= originMatrix;                                    // translatare oriunde in spatiul logic
+    modelMatrix *= transform2D::Translate(0, 0.5f * tScale);        // translatare la locul potrivit
+    modelMatrix *= tankScale;                                       // scalare cu dimensiunea tancului
+    modelMatrix *= transform2D::Scale(0.5f);
+    RenderMesh2D(meshes["tank_gun"], shaders["VertexColor"], modelMatrix);
+
+    
 }
 
 
@@ -165,7 +210,7 @@ void TankWars::FrameEnd()
 
 void TankWars::OnInputUpdate(float deltaTime, int mods)
 {
-    float speed = 100;
+    float speed = 5;
     if (window->KeyHold(GLFW_KEY_W)) {
         sc.y += speed * deltaTime;
     }
