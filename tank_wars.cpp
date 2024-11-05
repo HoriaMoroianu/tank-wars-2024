@@ -148,7 +148,7 @@ void TankWars::Update(float deltaTimeSeconds)
     //RenderMesh2D(meshes["terrain"], shaders["VertexColor"], glm::mat3(1));
 
     glm::mat3 originMatrix = transform2D::Translate(window->GetResolution().x / 2, window->GetResolution().y / 2);
-    //glm::mat3 originMatrix = transform2D::Translate(300, 200);
+    //glm::mat3 originMatrix = transform2D::Translate(300 + sc.x, 200 + sc.y);
     float tScale = 150.f;
 
     RenderMesh2D(meshes["origin"], shaders["VertexColor"], originMatrix * transform2D::Scale(3.5f));
@@ -159,47 +159,41 @@ void TankWars::Update(float deltaTimeSeconds)
     glm::mat3 tankScale = transform2D::Scale(tScale);
     glm::mat3 modelMatrix{};
 
-    // Tank Nose
-    modelMatrix = glm::mat3(1.0f);
-    modelMatrix *= originMatrix;                                    // translatare oriunde in spatiul logic
-    modelMatrix *= tankScale;                                       // scalare cu dimensiunea tancului
-    //modelMatrix *= transform2D::Translate(0, -0.125f * tScale);      // translatare la locul potrivit
-
-    //modelMatrix *= transform2D::Translate(0, -0.5f * tScale);
-    //modelMatrix *= transform2D::Rotate(-M_PI / 4);                       // rotatie 180
-    //modelMatrix *= transform2D::Translate(0, 0.5f * tScale);
-
-    //modelMatrix *= transform2D::Scale(0.1f, 1.25f);
-    modelMatrix *= transform2D::Translate(0, 1);
-    modelMatrix *= transform2D::Scale(sc.x, sc.y);
-    RenderMesh2D(meshes["tank_nose"], shaders["VertexColor"], modelMatrix);
-
     // Tank Body
     modelMatrix = glm::mat3(1.0f);
-    modelMatrix *= originMatrix;                                    // translatare oriunde in spatiul logic
-    modelMatrix *= transform2D::Translate(0, 0.375f * tScale);      // translatare la locul potrivit
-    modelMatrix *= tankScale;                                       // scalare cu dimensiunea tancului
-    modelMatrix *= transform2D::Scale(1.25f, 0.75f);
+    modelMatrix *= originMatrix;
+    modelMatrix *= tankScale;
+    modelMatrix *= transform2D::Translate(0, 0.33f);
+    modelMatrix *= transform2D::Scale(1.25f, 0.7f);
     RenderMesh2D(meshes["tank_body"], shaders["VertexColor"], modelMatrix);
 
     // Tank Base
     modelMatrix = glm::mat3(1.0f);
-    modelMatrix *= originMatrix;                                    // translatare oriunde in spatiul logic
-    modelMatrix *= transform2D::Translate(0, 0.125f * tScale);      // translatare la locul potrivit
-    modelMatrix *= transform2D::Rotate(M_PI);                       // rotatie 180
-    modelMatrix *= tankScale;                                       // scalare cu dimensiunea tancului
-    modelMatrix *= transform2D::Scale(1, 0.5f);                     // turtire
+    modelMatrix *= originMatrix;
+    modelMatrix *= tankScale;
+    modelMatrix *= transform2D::Translate(0, 0.125f);
+    modelMatrix *= transform2D::Scale(1, 0.5f);
+    modelMatrix *= transform2D::Rotate(M_PI);
     RenderMesh2D(meshes["tank_base"], shaders["VertexColor"], modelMatrix);
 
     // Tank Head
     modelMatrix = glm::mat3(1.0f);
-    modelMatrix *= originMatrix;                                    // translatare oriunde in spatiul logic
-    modelMatrix *= transform2D::Translate(0, 0.5f * tScale);        // translatare la locul potrivit
-    modelMatrix *= tankScale;                                       // scalare cu dimensiunea tancului
+    modelMatrix *= originMatrix;
+    modelMatrix *= tankScale;
+    modelMatrix *= transform2D::Translate(0, 0.5f);
     modelMatrix *= transform2D::Scale(0.5f);
     RenderMesh2D(meshes["tank_gun"], shaders["VertexColor"], modelMatrix);
 
-    
+    // Tank Nose
+    modelMatrix = glm::mat3(1.0f);
+    modelMatrix *= originMatrix;
+    modelMatrix *= tankScale;
+    modelMatrix *= transform2D::Translate(0, 0.5f);
+    modelMatrix *= transform2D::Rotate(-M_PI / angle);
+    modelMatrix *= transform2D::Translate(0, 0.5f);
+    modelMatrix *= transform2D::Scale(0.12f, 0.85f);
+    modelMatrix *= transform2D::Translate(0, 0.5f);
+    RenderMesh2D(meshes["tank_nose"], shaders["VertexColor"], modelMatrix);
 }
 
 
@@ -210,7 +204,7 @@ void TankWars::FrameEnd()
 
 void TankWars::OnInputUpdate(float deltaTime, int mods)
 {
-    float speed = 5;
+    float speed = 50;
     if (window->KeyHold(GLFW_KEY_W)) {
         sc.y += speed * deltaTime;
     }
@@ -223,6 +217,13 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
     }
     if (window->KeyHold(GLFW_KEY_A)) {
         sc.x -= speed * deltaTime;
+    }
+
+    if (window->KeyHold(GLFW_KEY_Q)) {
+        angle += 1.5f * deltaTime;
+    }
+    if (window->KeyHold(GLFW_KEY_E)) {
+        angle -= 1.5f * deltaTime;
     }
 }
 
