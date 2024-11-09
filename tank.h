@@ -12,17 +12,19 @@ namespace tw
 		Tank();
 		~Tank();
 
-		void Update();
+		std::vector<Mesh*> getTankMeshes();
+		std::vector<std::pair<std::string, glm::mat3>> getTankParts();
+		void moveTank(const float distance);
+		void rotateGun(const float angle);
 
 	private:
-		std::unordered_map<std::string, glm::mat3> CreateModel
-			(const float tPosX, const float tPosY, const float tScale, const float noseAngle);
 
 	private:
-		std::vector<Mesh*> tankMeshes;
-		std::unordered_map<std::string, glm::mat3> tankParts;
-		glm::vec2 tankPos;
-		float tankScale;
+		static int instances;
+		std::string id;
+
+		glm::vec2 tankPos;	// TODO put in constructor + colors
+		float tankSize;
 		float tankAngle;
 		float noseAngle;
 	};

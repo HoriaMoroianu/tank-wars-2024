@@ -1,8 +1,8 @@
 #include "lab_m1/tank-wars-2024/tank_wars.h"
 
-using namespace tw;
-using namespace m1;
+#include <iostream>
 
+using namespace tw;
 
 TankWars::TankWars()
 {
@@ -19,9 +19,9 @@ void TankWars::CreateTerrain()
     // Terrain height generation function 
     auto generator = [](int x) -> float { return 100.f * std::sin(0.01f * x) + 300.f; };
 
-    for (int i = -terrainOffset; i < window->GetResolution().x + terrainOffset; i += terrainStep) {
-        terrainVertices.push_back(VertexFormat(glm::vec3(i, generator(i), 0), terrainColor));
-        terrainVertices.push_back(VertexFormat(glm::vec3(i, -terrainOffset, 0), terrainColor));
+    for (int i = 0; i < window->GetResolution().x + terrainOffset; i += terrainStep) {
+        terrainVertices.push_back(VertexFormat(glm::vec3(i, generator(i), 0), colorGreenGrass));
+        terrainVertices.push_back(VertexFormat(glm::vec3(i, -terrainOffset, 0), colorGreenGrass));
     }
 
     std::vector<unsigned int> indices(terrainVertices.size());
@@ -51,16 +51,17 @@ void TankWars::Init()
     GetCameraInput()->SetActive(false);
 
     CreateTerrain();
-	tank1 = Tank();
-
-    //AddMeshToList(CreateCircle("origin", glm::vec3(1, 0.5f, 0)));
+    
+	for (auto &mesh : tank1.getTankMeshes()) {
+		AddMeshToList(mesh);
+	}
 }
 
 
 void TankWars::FrameStart()
 {
     // Clears the color buffer (using the previously set color) and depth buffer
-    glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+    glClearColor(colorBlueSky.r, colorBlueSky.g, colorBlueSky.b, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glm::ivec2 resolution = window->GetResolution();
@@ -73,14 +74,10 @@ void TankWars::Update(float deltaTimeSeconds)
 {
     //RenderMesh2D(meshes["terrain"], shaders["VertexColor"], glm::mat3(1.0f));
 
-    //glm::mat3 originMatrix = transform2D::Translate(window->GetResolution().x / 2, window->GetResolution().y / 2);
-
-    /*RenderMesh2D(meshes["origin"], shaders["VertexColor"], originMatrix * transform2D::Scale(3.5f));
-
-    RenderMesh2D(meshes["origin"], shaders["VertexColor"], originMatrix 
-        * transform2D::Translate(0, 0.5f * tScale) * transform2D::Scale(3.5f));*/
-
-	tank1.Update();
+	auto& tankParts = tank1.getTankParts();
+	for (auto& part : tankParts) {
+		RenderMesh2D(meshes[part.first], shaders["VertexColor"], part.second);
+	}
 }
 
 
@@ -91,26 +88,20 @@ void TankWars::FrameEnd()
 
 void TankWars::OnInputUpdate(float deltaTime, int mods)
 {
-    float speed = 50;
-    if (window->KeyHold(GLFW_KEY_W)) {
-        sc.y += speed * deltaTime;
-    }
-    if (window->KeyHold(GLFW_KEY_S)) {
-        sc.y -= speed * deltaTime;
-    }
-
-    if (window->KeyHold(GLFW_KEY_D)) {
-        sc.x += speed * deltaTime;
-    }
+    const float speed = 50;
     if (window->KeyHold(GLFW_KEY_A)) {
-        sc.x -= speed * deltaTime;
+		tank1.moveTank(-speed * deltaTime);
     }
-
+    if (window->KeyHold(GLFW_KEY_D)) {
+        tank1.moveTank(speed * deltaTime);
+    }
+    
+	const float angularSpeed = RADIANS(45);
     if (window->KeyHold(GLFW_KEY_Q)) {
-        angle += 1.5f * deltaTime;
+		tank1.rotateGun(angularSpeed * deltaTime);
     }
     if (window->KeyHold(GLFW_KEY_E)) {
-        angle -= 1.5f * deltaTime;
+		tank1.rotateGun(-angularSpeed * deltaTime);
     }
 }
 

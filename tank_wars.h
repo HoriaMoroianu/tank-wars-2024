@@ -6,7 +6,7 @@
 #include "lab_m1/tank-wars-2024/tank.h"
 
 
-namespace m1
+namespace tw
 {
     class TankWars : public gfxc::SimpleScene
     {
@@ -34,10 +34,8 @@ namespace m1
 
      private:
          class tw::Tank tank1;
+         class tw::Tank tank2;
 
-         const glm::vec4 bgColor = { 0.2f, 0.2f, 0.2f, 1 };
-
-         const glm::vec3 terrainColor = { 0.3f, 0.55f, 0.03f };
          const int terrainOffset = 30;
          const int terrainStep = 10;
          std::vector<VertexFormat> terrainVertices;
