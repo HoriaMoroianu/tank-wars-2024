@@ -1,8 +1,9 @@
 #include "lab_m1/tank-wars-2024/tank_wars.h"
-
 #include <iostream>
 
 using namespace tw;
+
+std::vector<float*> TankWars::heightMap;
 
 TankWars::TankWars()
 {
@@ -16,11 +17,8 @@ TankWars::~TankWars()
 
 void TankWars::CreateTerrain()
 {
-    // Terrain height generation function 
-    auto generator = [](int x) -> float { return 100.f * std::sin(0.01f * x) + 300.f; };
-
     for (int i = 0; i < window->GetResolution().x + terrainOffset; i += terrainStep) {
-        terrainVertices.push_back(VertexFormat(glm::vec3(i, generator(i), 0), colorGreenGrass));
+        terrainVertices.push_back(VertexFormat(glm::vec3(i, TerrainGenerator(i), 0), colorGreenGrass));
         terrainVertices.push_back(VertexFormat(glm::vec3(i, -terrainOffset, 0), colorGreenGrass));
     }
 
@@ -50,11 +48,12 @@ void TankWars::Init()
     camera->Update();
     GetCameraInput()->SetActive(false);
 
-    CreateTerrain();
     
 	for (auto &mesh : tank1.getTankMeshes()) {
 		AddMeshToList(mesh);
 	}
+    CreateTerrain();
+	tank1.moveTank(0);
 }
 
 
@@ -72,7 +71,7 @@ void TankWars::FrameStart()
 
 void TankWars::Update(float deltaTimeSeconds)
 {
-    //RenderMesh2D(meshes["terrain"], shaders["VertexColor"], glm::mat3(1.0f));
+    RenderMesh2D(meshes["terrain"], shaders["VertexColor"], glm::mat3(1.0f));
 
 	auto& tankParts = tank1.getTankParts();
 	for (auto& part : tankParts) {
@@ -88,7 +87,7 @@ void TankWars::FrameEnd()
 
 void TankWars::OnInputUpdate(float deltaTime, int mods)
 {
-    const float speed = 50;
+    const float speed = 90;
     if (window->KeyHold(GLFW_KEY_A)) {
 		tank1.moveTank(-speed * deltaTime);
     }
@@ -96,11 +95,11 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
         tank1.moveTank(speed * deltaTime);
     }
     
-	const float angularSpeed = RADIANS(45);
-    if (window->KeyHold(GLFW_KEY_Q)) {
+	const float angularSpeed = RADIANS(60);
+    if (window->KeyHold(GLFW_KEY_W)) {
 		tank1.rotateGun(angularSpeed * deltaTime);
     }
-    if (window->KeyHold(GLFW_KEY_E)) {
+    if (window->KeyHold(GLFW_KEY_S)) {
 		tank1.rotateGun(-angularSpeed * deltaTime);
     }
 }

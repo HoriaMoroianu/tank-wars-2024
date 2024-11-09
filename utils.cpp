@@ -1,6 +1,16 @@
 #include "lab_m1/tank-wars-2024/utils.h"
 
 
+float tw::TerrainGenerator(const int x)
+{
+	// TODO: randomize mountain position
+	float mountain = 250.f * pow(M_E, -pow(x - 700, 2) / 20000.f);
+    return 50 * sin(M_PI / 600 * x) +
+        25 * sin(M_PI / 300 * x)
+        + 10 * sin(M_PI / 150 * x)
+        + mountain + 250.f;
+}
+
 Mesh* tw::CreateTrapeze(const std::string name, const glm::vec3 color)
 {
     std::vector<VertexFormat> vertices

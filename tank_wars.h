@@ -1,13 +1,15 @@
 #pragma once
 
 #include "components/simple_scene.h"
-#include "lab_m1/tank-wars-2024/transform2D.h"
-#include "lab_m1/tank-wars-2024/utils.h"
 #include "lab_m1/tank-wars-2024/tank.h"
+#include "lab_m1/tank-wars-2024/utils.h"
+#include "lab_m1/tank-wars-2024/transform2D.h"
 
 
 namespace tw
 {
+	class Tank;
+
     class TankWars : public gfxc::SimpleScene
     {
      public:
@@ -32,16 +34,15 @@ namespace tw
 
         void CreateTerrain();
 
+    public:
+         static std::vector<float *> heightMap;
+         static const int terrainStep = 5;
+
      private:
          class tw::Tank tank1;
          class tw::Tank tank2;
+         std::vector<VertexFormat> terrainVertices;
 
          const int terrainOffset = 30;
-         const int terrainStep = 10;
-         std::vector<VertexFormat> terrainVertices;
-         std::vector<float *> heightMap;
-
-         glm::vec2 sc{ 1, 1 };
-         float angle = 2;
     };
 }   // namespace m1

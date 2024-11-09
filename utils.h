@@ -11,13 +11,7 @@ namespace tw
 	const glm::vec3 colorBlueSky = { 0.53f, 0.81f, 0.98f };
 	const glm::vec3 colorGreenGrass = { 0.3f, 0.55f, 0.03f };
 
-	template <typename T>
-	T clamp(T value, T min, T max) {
-		if (value < min) return min;
-		if (value > max) return max;
-		return value;
-	}
-
+	float TerrainGenerator(const int x);
 	Mesh* CreateTrapeze(const std::string name, const glm::vec3 color);
 	Mesh* CreateCircle(const std::string name, const glm::vec3 color, const int subdivisions = 15);
 	Mesh* CreateSquare(const std::string name, const glm::vec3 color);

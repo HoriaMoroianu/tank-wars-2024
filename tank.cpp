@@ -1,4 +1,5 @@
 #include "lab_m1/tank-wars-2024/tank.h"
+#include "lab_m1/tank-wars-2024/tank_wars.h"
 
 #include <iostream>
 using namespace tw;
@@ -10,9 +11,9 @@ Tank::Tank()
 	Tank::instances++;
 	id = std::to_string(Tank::instances);
     tankPos = { 600, 150 };
-    tankSize = 50;
-    noseAngle = RADIANS(-75);
-	tankAngle = 0;
+    tankSize = 30;
+    noseAngle = 0;
+	tankAngle = 2;
 }
 
 Tank::~Tank()
@@ -36,7 +37,8 @@ std::vector<std::pair<std::string, glm::mat3>> Tank::getTankParts()
 
 	glm::mat3 tankTranslation = transform2D::Translate(tankPos.x, tankPos.y);
     glm::mat3 tankScale = transform2D::Scale(tankSize);
-    glm::mat3 transformationMatrix = tankTranslation * tankScale;
+	glm::mat3 tankRotation = transform2D::Rotate(tankAngle);
+    glm::mat3 transformationMatrix = tankTranslation * tankScale * tankRotation;
 
     // Tank Body
     glm::mat3 bodyMatrix = transformationMatrix;
@@ -72,10 +74,24 @@ std::vector<std::pair<std::string, glm::mat3>> Tank::getTankParts()
 void Tank::moveTank(const float distance)
 {
 	// TODO no magic numbers
-    tankPos.x = clamp(tankPos.x + distance, 0.0f, 1200.0f);
+    tankPos.x = glm::clamp(tankPos.x + distance, 0.0f, 1200.0f);
+    
+	glm::vec2 A = { (int)tankPos.x / TankWars::terrainStep * TankWars::terrainStep , 0};
+	A.y = *TankWars::heightMap[A.x / TankWars::terrainStep];
+
+	glm::vec2 B = { A.x + TankWars::terrainStep, 0 };
+	B.y = *TankWars::heightMap[B.x / TankWars::terrainStep];
+
+	float t = (tankPos.x - A.x) / (B.x - A.x);
+	tankPos.y = A.y + t * (B.y - A.y);
+
+	float targetAngle = atan2(B.y - A.y, B.x - A.x);
+	tankAngle = (abs(tankAngle - targetAngle) <= M_PI / 4) ? 
+        glm::mix(tankAngle, targetAngle, 0.5f) : 
+        targetAngle;
 }
 
 void Tank::rotateGun(const float angle)
 {
-	noseAngle = tw::clamp(noseAngle + angle, RADIANS(-75), RADIANS(75));
+	noseAngle = glm::clamp(noseAngle + angle, RADIANS(-75), RADIANS(75));
 }
