@@ -13,10 +13,13 @@ namespace tw
 		~Tank();
 
 		std::vector<Mesh*> getTankMeshes();
+		glm::mat3 getTransformationMatrix();
+		glm::mat3 getProjectileMatrix();
 		std::vector<std::pair<std::string, glm::mat3>> getTankParts();
 		void moveTank(const float distance);
 		void rotateGun(const float angle);
 
+		float noseAngle;
 	private:
 
 	private:
@@ -26,6 +29,5 @@ namespace tw
 		glm::vec2 tankPos;	// TODO put in constructor + colors
 		float tankSize;
 		float tankAngle;
-		float noseAngle;
 	};
 }

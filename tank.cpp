@@ -31,14 +31,28 @@ std::vector<Mesh*> Tank::getTankMeshes()
     return meshes;
 }
 
+glm::mat3 Tank::getTransformationMatrix()
+{
+    glm::mat3 tankTranslation = transform2D::Translate(tankPos.x, tankPos.y);
+    glm::mat3 tankScale = transform2D::Scale(tankSize);
+    glm::mat3 tankRotation = transform2D::Rotate(tankAngle);
+	return tankTranslation * tankRotation * tankScale;
+}
+
+glm::mat3 Tank::getProjectileMatrix()
+{
+    glm::mat3 projectileMatrix = getTransformationMatrix();
+    projectileMatrix *= transform2D::Translate(0, 0.5f);
+    projectileMatrix *= transform2D::Rotate(noseAngle);
+    projectileMatrix *= transform2D::Translate(0, 1.5f);
+    projectileMatrix *= transform2D::Scale(0.2f);
+	return projectileMatrix;
+}
+
 std::vector<std::pair<std::string, glm::mat3>> Tank::getTankParts()
 {
     std::vector<std::pair<std::string, glm::mat3>> tankParts{};
-
-	glm::mat3 tankTranslation = transform2D::Translate(tankPos.x, tankPos.y);
-    glm::mat3 tankScale = transform2D::Scale(tankSize);
-	glm::mat3 tankRotation = transform2D::Rotate(tankAngle);
-    glm::mat3 transformationMatrix = tankTranslation * tankScale * tankRotation;
+    glm::mat3 transformationMatrix = getTransformationMatrix();
 
     // Tank Body
     glm::mat3 bodyMatrix = transformationMatrix;
@@ -66,7 +80,7 @@ std::vector<std::pair<std::string, glm::mat3>> Tank::getTankParts()
     noseMatrix *= transform2D::Translate(0, 0.45f);
     noseMatrix *= transform2D::Scale(0.12f, 0.9f);
     noseMatrix *= transform2D::Translate(0, 0.5f);
-	tankParts.push_back({ "tank_nose" + id, noseMatrix });
+    tankParts.push_back({ "tank_nose" + id, noseMatrix });
 
 	return tankParts;
 }
@@ -93,5 +107,5 @@ void Tank::moveTank(const float distance)
 
 void Tank::rotateGun(const float angle)
 {
-	noseAngle = glm::clamp(noseAngle + angle, RADIANS(-75), RADIANS(75));
+	noseAngle = glm::clamp(noseAngle + angle, RADIANS(-80), RADIANS(80));
 }
