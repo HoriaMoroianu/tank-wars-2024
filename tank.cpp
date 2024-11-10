@@ -109,3 +109,15 @@ void Tank::rotateGun(const float angle)
 {
 	noseAngle = glm::clamp(noseAngle + angle, RADIANS(-80), RADIANS(80));
 }
+
+void Tank::shoot()
+{
+	projectiles.push_back(Projectile(this));
+}
+
+void Tank::updateProjectiles(const float deltaTime)
+{
+	for (auto& projectile : projectiles) {
+		projectile.moveProjectile(deltaTime);
+	}
+}

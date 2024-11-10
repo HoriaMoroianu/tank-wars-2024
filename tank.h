@@ -3,6 +3,7 @@
 #include "components/simple_scene.h"
 #include "lab_m1/tank-wars-2024/transform2D.h"
 #include "lab_m1/tank-wars-2024/utils.h"
+#include "lab_m1/tank-wars-2024/projectile.h"
 
 namespace tw
 {
@@ -19,7 +20,12 @@ namespace tw
 		void moveTank(const float distance);
 		void rotateGun(const float angle);
 
-		float noseAngle;
+		void shoot();
+		void updateProjectiles(const float deltaTime);
+
+		float getGunAngle() const { return noseAngle; };
+		std::vector<class Projectile>& getProjectiles() { return projectiles; };
+
 	private:
 
 	private:
@@ -27,7 +33,10 @@ namespace tw
 		std::string id;
 
 		glm::vec2 tankPos;	// TODO put in constructor + colors
+		float noseAngle;
 		float tankSize;
 		float tankAngle;
+
+		std::vector<class Projectile> projectiles;
 	};
 }

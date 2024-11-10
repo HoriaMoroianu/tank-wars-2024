@@ -45,8 +45,7 @@ namespace tw
 
          const int terrainOffset = 30;
 
-         glm::vec2 projectilePos = {0, 0};
-		 glm::vec2 projectileSpeed = { 0, 150 };
-		 glm::vec2 gravity = { 0, 90 };
+		 // TODO: remove this
+		 bool toggleTerrain = true;
     };
 }   // namespace m1

@@ -73,25 +73,19 @@ void TankWars::FrameStart()
 
 void TankWars::Update(float deltaTimeSeconds)
 {
-    RenderMesh2D(meshes["terrain"], shaders["VertexColor"], glm::mat3(1.0f));
+	if (toggleTerrain) {
+		RenderMesh2D(meshes["terrain"], shaders["VertexColor"], glm::mat3(1.0f));
+	}
 
 	auto& tankParts = tank1.getTankParts();
 	for (auto& part : tankParts) {
 		RenderMesh2D(meshes[part.first], shaders["VertexColor"], part.second);
 	}
 
-	
-
-	projectilePos += projectileSpeed * deltaTimeSeconds;
-	projectileSpeed -= gravity * deltaTimeSeconds;
-
-    if (projectilePos.y <= 0) {
-        projectilePos = { 0, 0 };
-        projectileSpeed = glm::vec2{ cos(tank1.noseAngle + M_PI / 2), sin(tank1.noseAngle + M_PI / 2) } * 180.f;
-    }
-
-    glm::mat3 projectileMatrix = transform2D::Translate(projectilePos.x, projectilePos.y);
-    RenderMesh2D(meshes["projectile"], shaders["VertexColor"], projectileMatrix * tank1.getProjectileMatrix());
+    tank1.updateProjectiles(deltaTimeSeconds);
+	for (auto& projectile : tank1.getProjectiles()) {
+		RenderMesh2D(meshes["projectile"], shaders["VertexColor"], projectile.getModelMatrix());
+	}
 }
 
 
@@ -117,17 +111,19 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
     if (window->KeyHold(GLFW_KEY_S)) {
 		tank1.rotateGun(-angularSpeed * deltaTime);
     }
-
-    if (window->KeyHold(GLFW_KEY_SPACE)) {
-        projectilePos = { 300, 200 };
-        projectileSpeed = glm::vec2{ cos(M_PI / 3), sin(M_PI / 3) } * 300.f;
-    }
 }
 
 
 void TankWars::OnKeyPress(int key, int mods)
 {
     // Add key press event
+	if (key == GLFW_KEY_SPACE) {
+		tank1.shoot();
+	}
+
+	if (key == GLFW_KEY_T) {
+		toggleTerrain = !toggleTerrain;
+	}
 }
 
 
