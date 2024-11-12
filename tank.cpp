@@ -86,23 +86,19 @@ std::vector<std::pair<std::string, glm::mat3>> Tank::getTankParts()
 
 void Tank::moveTank(const float distance)
 {
-	// TODO no magic numbers
     tankPos.x = glm::clamp(tankPos.x + distance, 0.0f, TankWars::screenSize.x);
     
-	glm::vec2 A = { (int)tankPos.x / TankWars::terrainStep * TankWars::terrainStep , 0};
-	A.y = *TankWars::heightMap[A.x / TankWars::terrainStep];
-
-	glm::vec2 B = { A.x + TankWars::terrainStep, 0 };
-	B.y = *TankWars::heightMap[B.x / TankWars::terrainStep];
+	auto coords = LocateOnTerrain(tankPos);
+	glm::vec2 A = coords.first;
+	glm::vec2 B = coords.second;
 
 	float t = (tankPos.x - A.x) / (B.x - A.x);
 	tankPos.y = A.y + t * (B.y - A.y);
 
 	float targetAngle = atan2(B.y - A.y, B.x - A.x);
-	// Snap if angle is too steep
-	tankAngle = (abs(tankAngle - targetAngle) <= M_PI / 4) ? 
-        glm::mix(tankAngle, targetAngle, 0.5f) : 
-        targetAngle;
+	// Snap if angle is too steep, else interpolate
+    tankAngle = (abs(tankAngle - targetAngle) > tankAngleTol) ? targetAngle :
+        glm::mix(tankAngle, targetAngle, 0.5f);
 }
 
 void Tank::rotateGun(const float angle)
@@ -123,6 +119,7 @@ void Tank::updateProjectiles(const float deltaTime)
         
 		glm::vec2 pos = projectile.getPos();
         if (pos.x < 0 || pos.y < 0 || pos.x > TankWars::screenSize.x) {
+			projectile.~Projectile();
 			continue;
         }
 		newProjectiles.push_back(projectile);

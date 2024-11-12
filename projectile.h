@@ -16,6 +16,8 @@ namespace tw
 		~Projectile();
 
 		void moveProjectile(const float deltaTime);
+		bool checkCollision();
+
 		glm::mat3 getModelMatrix();
 		glm::vec2 getPos() const { return pos; };
 

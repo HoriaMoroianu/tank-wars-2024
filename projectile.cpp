@@ -21,6 +21,22 @@ void Projectile::moveProjectile(const float deltaTime)
 {
 	pos += speed * deltaTime;
 	speed -= gravity * deltaTime;
+
+	if (checkCollision()) {
+		std::cout << "Collision detected " << pos.x << " " << pos.y << std::endl;
+	}
+}
+
+bool Projectile::checkCollision()
+{
+	auto coords = LocateOnTerrain(pos);
+	glm::vec2 A = coords.first;
+	glm::vec2 B = coords.second;
+
+	float t = (pos.x - A.x) / (B.x - A.x);
+	float terrainY = A.y + t * (B.y - A.y);
+
+	return ((pos.y - terrainY) < projectileYTol);
 }
 
 glm::mat3 Projectile::getModelMatrix()

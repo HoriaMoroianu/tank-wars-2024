@@ -12,8 +12,12 @@ namespace tw
 
 	const glm::vec2 gravity = { 0, 90 };
 
+	const float tankAngleTol = M_PI_4;
+	const float projectileYTol = 0.1f;
+
 	float TerrainGenerator(const int x);
 	Mesh* CreateTrapeze(const std::string name, const glm::vec3 color);
 	Mesh* CreateCircle(const std::string name, const glm::vec3 color, const int subdivisions = 15);
 	Mesh* CreateSquare(const std::string name, const glm::vec3 color);
+	std::pair<glm::vec2, glm::vec2> LocateOnTerrain(const glm::vec2 pos);
 }

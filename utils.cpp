@@ -1,5 +1,5 @@
 #include "lab_m1/tank-wars-2024/utils.h"
-
+#include "lab_m1/tank-wars-2024/tank_wars.h"
 
 float tw::TerrainGenerator(const int x)
 {
@@ -73,4 +73,18 @@ Mesh* tw::CreateSquare(const std::string name, const glm::vec3 color)
     square->SetDrawMode(GL_TRIANGLES);
     square->InitFromData(vertices, indices);
     return square;
+}
+
+std::pair<glm::vec2, glm::vec2> tw::LocateOnTerrain(const glm::vec2 pos)
+{
+    glm::vec2 A{};
+    glm::vec2 B{};
+
+    A.x = (int)pos.x / TankWars::terrainStep * TankWars::terrainStep;
+    A.y = *TankWars::heightMap[A.x / TankWars::terrainStep];
+
+    B.x = A.x + TankWars::terrainStep;
+    B.y = *TankWars::heightMap[B.x / TankWars::terrainStep];
+
+    return { A, B };
 }
