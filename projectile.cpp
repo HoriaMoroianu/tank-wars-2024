@@ -1,4 +1,5 @@
 #include "lab_m1/tank-wars-2024/projectile.h"
+#include "lab_m1/tank-wars-2024/tank_wars.h"
 
 #include <iostream>
 using namespace tw;
@@ -21,10 +22,6 @@ void Projectile::moveProjectile(const float deltaTime)
 {
 	pos += speed * deltaTime;
 	speed -= gravity * deltaTime;
-
-	if (checkCollision()) {
-		std::cout << "Collision detected " << pos.x << " " << pos.y << std::endl;
-	}
 }
 
 bool Projectile::checkCollision()
@@ -32,11 +29,34 @@ bool Projectile::checkCollision()
 	auto coords = LocateOnTerrain(pos);
 	glm::vec2 A = coords.first;
 	glm::vec2 B = coords.second;
+	glm::vec2 I{};
 
 	float t = (pos.x - A.x) / (B.x - A.x);
-	float terrainY = A.y + t * (B.y - A.y);
+	I.y = A.y + t * (B.y - A.y);
+	I.x = pos.x;
 
-	return ((pos.y - terrainY) < projectileYTol);
+	if ((pos.y - I.y) >= projectileYTol) {
+		return false;
+	}
+
+	// TODO check ofscreen
+	for (int x = A.x - blastRadius; x < B.x + blastRadius; x += terrainStep) {
+		if (x < 0 || x >= TankWars::screenSize.x) {
+			continue;
+		}
+
+		float temp = sqrt(blastRadius * blastRadius - (x - I.x) * (x - I.x));
+		if (std::isnan(temp)) {
+			continue;
+		}
+		float y = -temp + I.y;
+
+		float* height = TankWars::heightMap[x / terrainStep];
+		if (y < *height) {
+			*height = y;
+		}
+	}
+	return true;
 }
 
 glm::mat3 Projectile::getModelMatrix()

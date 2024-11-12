@@ -14,6 +14,8 @@ namespace tw
 
 	const float tankAngleTol = M_PI_4;
 	const float projectileYTol = 0.1f;
+	const int terrainStep = 5;
+	const int blastRadius = 10 * terrainStep;
 
 	float TerrainGenerator(const int x);
 	Mesh* CreateTrapeze(const std::string name, const glm::vec3 color);

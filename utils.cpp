@@ -80,11 +80,11 @@ std::pair<glm::vec2, glm::vec2> tw::LocateOnTerrain(const glm::vec2 pos)
     glm::vec2 A{};
     glm::vec2 B{};
 
-    A.x = (int)pos.x / TankWars::terrainStep * TankWars::terrainStep;
-    A.y = *TankWars::heightMap[A.x / TankWars::terrainStep];
+    A.x = (int)pos.x / terrainStep * terrainStep;
+    A.y = *TankWars::heightMap[A.x / terrainStep];
 
-    B.x = A.x + TankWars::terrainStep;
-    B.y = *TankWars::heightMap[B.x / TankWars::terrainStep];
+    B.x = A.x + terrainStep;
+    B.y = *TankWars::heightMap[B.x / terrainStep];
 
     return { A, B };
 }

@@ -99,6 +99,11 @@ void Tank::moveTank(const float distance)
 	// Snap if angle is too steep, else interpolate
     tankAngle = (abs(tankAngle - targetAngle) > tankAngleTol) ? targetAngle :
         glm::mix(tankAngle, targetAngle, 0.5f);
+
+    if (tankPos.y < 0) {
+        tankPos.y = 0;
+		tankAngle = 0;
+    }
 }
 
 void Tank::rotateGun(const float angle)
@@ -116,9 +121,9 @@ void Tank::updateProjectiles(const float deltaTime)
     std::vector<Projectile> newProjectiles {};
     for (auto& projectile : projectiles) {
         projectile.moveProjectile(deltaTime);
-        
+
 		glm::vec2 pos = projectile.getPos();
-        if (pos.x < 0 || pos.y < 0 || pos.x > TankWars::screenSize.x) {
+        if (pos.x < 0 || pos.y < 0 || pos.x > TankWars::screenSize.x || projectile.checkCollision()) {
 			projectile.~Projectile();
 			continue;
         }

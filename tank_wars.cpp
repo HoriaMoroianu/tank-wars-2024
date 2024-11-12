@@ -23,20 +23,19 @@ void TankWars::CreateTerrain()
         terrainVertices.push_back(VertexFormat(glm::vec3(i, -terrainOffset, 0), colorGreenGrass));
     }
 
-    std::vector<unsigned int> indices(terrainVertices.size());
     heightMap.reserve(terrainVertices.size() / 2);
 
     for (int i = 0; i < terrainVertices.size(); i++) {
         if ((i & 1) == 0) {
             heightMap.push_back(&terrainVertices[i].position.y);
         }
-        indices[i] = i;
+        indices.push_back(i);
     }
 
-    Mesh* terrain = new Mesh("terrain");
+    /*Mesh* terrain = new Mesh("terrain");
     terrain->SetDrawMode(GL_TRIANGLE_STRIP);
-    terrain->InitFromData(terrainVertices, indices);
-    AddMeshToList(terrain);
+    terrain->InitFromData(terrainVertices, indices);*/
+    //AddMeshToList(terrain);
 }
 
 void TankWars::Init()
@@ -50,12 +49,19 @@ void TankWars::Init()
     GetCameraInput()->SetActive(false);
 
     TankWars::screenSize = glm::vec2(resolution.x, resolution.y);
+    CreateTerrain();
 
+	// Init tank1
 	for (auto &mesh : tank1.getTankMeshes()) {
 		AddMeshToList(mesh);
 	}
-    CreateTerrain();
 	tank1.moveTank(0);
+
+	// Init tank2
+	for (auto &mesh : tank2.getTankMeshes()) {
+		AddMeshToList(mesh);
+	}
+	tank2.moveTank(0);
 
 	AddMeshToList(CreateCircle("projectile", colorBlack));
 }
@@ -76,17 +82,34 @@ void TankWars::FrameStart()
 void TankWars::Update(float deltaTimeSeconds)
 {
 	if (toggleTerrain) {
-		RenderMesh2D(meshes["terrain"], shaders["VertexColor"], glm::mat3(1.0f));
+        {
+            Mesh* terrain = new Mesh("terrain");
+            terrain->SetDrawMode(GL_TRIANGLE_STRIP);
+            terrain->InitFromData(terrainVertices, indices);
+            RenderMesh2D(terrain, shaders["VertexColor"], glm::mat3(1.0f));
+        }
 	}
 
+	// Update tank1
+    tank1.updateProjectiles(deltaTimeSeconds);
+	for (auto& projectile : tank1.getProjectiles()) {
+		RenderMesh2D(meshes["projectile"], shaders["VertexColor"], projectile.getModelMatrix());
+	}
+	tank1.moveTank(0);
 	auto& tankParts = tank1.getTankParts();
 	for (auto& part : tankParts) {
 		RenderMesh2D(meshes[part.first], shaders["VertexColor"], part.second);
 	}
 
-    tank1.updateProjectiles(deltaTimeSeconds);
-	for (auto& projectile : tank1.getProjectiles()) {
+	// Update tank2
+	tank2.updateProjectiles(deltaTimeSeconds);
+	for (auto& projectile : tank2.getProjectiles()) {
 		RenderMesh2D(meshes["projectile"], shaders["VertexColor"], projectile.getModelMatrix());
+	}
+	tank2.moveTank(0);
+	auto& tankParts2 = tank2.getTankParts();
+	for (auto& part : tankParts2) {
+		RenderMesh2D(meshes[part.first], shaders["VertexColor"], part.second);
 	}
 }
 
@@ -113,6 +136,20 @@ void TankWars::OnInputUpdate(float deltaTime, int mods)
     if (window->KeyHold(GLFW_KEY_S)) {
 		tank1.rotateGun(-angularSpeed * deltaTime);
     }
+
+	if (window->KeyHold(GLFW_KEY_LEFT)) {
+		tank2.moveTank(-speed * deltaTime);
+	}
+	if (window->KeyHold(GLFW_KEY_RIGHT)) {
+		tank2.moveTank(speed * deltaTime);
+	}
+
+	if (window->KeyHold(GLFW_KEY_UP)) {
+		tank2.rotateGun(angularSpeed * deltaTime);
+	}
+	if (window->KeyHold(GLFW_KEY_DOWN)) {
+		tank2.rotateGun(-angularSpeed * deltaTime);
+	}
 }
 
 
@@ -121,6 +158,10 @@ void TankWars::OnKeyPress(int key, int mods)
     // Add key press event
 	if (key == GLFW_KEY_SPACE) {
 		tank1.shoot();
+	}
+
+	if (key == GLFW_KEY_ENTER) {
+		tank2.shoot();
 	}
 
 	if (key == GLFW_KEY_T) {
