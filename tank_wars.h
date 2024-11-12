@@ -37,6 +37,7 @@ namespace tw
     public:
          static std::vector<float *> heightMap;
          static const int terrainStep = 5;
+		 static glm::vec2 screenSize;
 
      private:
          class tw::Tank tank1;

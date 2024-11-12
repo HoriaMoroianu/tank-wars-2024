@@ -5,10 +5,12 @@ using namespace tw;
 
 Projectile::Projectile(Tank *tank) : tank(tank)
 {
-	offsetShootPos = tank->getProjectileMatrix();
-	pos = { offsetShootPos[2][0], offsetShootPos[2][1] };
-	float gunAngle = tank->getGunAngle() + M_PI_2;
+	glm::mat3 tankTansform = tank->getProjectileMatrix();
+	pos = { tankTansform[2][0], tankTansform[2][1] };
+
+	float gunAngle = tank->getGunAngle() + tank->getTankAngle() + M_PI_2;
 	speed = glm::vec2{ cos(gunAngle), sin(gunAngle) } * magnitude;
+	size = 0.2f * tank->getTankSize();
 }
 
 Projectile::~Projectile()
@@ -23,6 +25,5 @@ void Projectile::moveProjectile(const float deltaTime)
 
 glm::mat3 Projectile::getModelMatrix()
 {
-	std::cout << pos.x << " " << pos.y << std::endl;
-	return transform2D::Translate(pos.x, pos.y);
+	return transform2D::Translate(pos.x, pos.y) * transform2D::Scale(size);
 }

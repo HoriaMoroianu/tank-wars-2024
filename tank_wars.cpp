@@ -4,6 +4,7 @@
 using namespace tw;
 
 std::vector<float*> TankWars::heightMap;
+glm::vec2 TankWars::screenSize = glm::vec2(1280, 720);
 
 TankWars::TankWars()
 {
@@ -48,7 +49,8 @@ void TankWars::Init()
     camera->Update();
     GetCameraInput()->SetActive(false);
 
-    
+    TankWars::screenSize = glm::vec2(resolution.x, resolution.y);
+
 	for (auto &mesh : tank1.getTankMeshes()) {
 		AddMeshToList(mesh);
 	}

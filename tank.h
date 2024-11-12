@@ -23,8 +23,10 @@ namespace tw
 		void shoot();
 		void updateProjectiles(const float deltaTime);
 
-		float getGunAngle() const { return noseAngle; };
 		std::vector<class Projectile>& getProjectiles() { return projectiles; };
+		float getGunAngle() const { return noseAngle; };
+		float getTankAngle() const { return tankAngle; };
+		float getTankSize() const { return tankSize; };
 
 	private:
 

@@ -6,14 +6,14 @@ using namespace tw;
 
 int Tank::instances = 0;
 
-Tank::Tank()
+Tank::Tank() 
 {
 	Tank::instances++;
 	id = std::to_string(Tank::instances);
     tankPos = { 600, 150 };
     tankSize = 30;
     noseAngle = 0;
-	tankAngle = 2;
+	tankAngle = 1;
 }
 
 Tank::~Tank()
@@ -45,7 +45,6 @@ glm::mat3 Tank::getProjectileMatrix()
     projectileMatrix *= transform2D::Translate(0, 0.5f);
     projectileMatrix *= transform2D::Rotate(noseAngle);
     projectileMatrix *= transform2D::Translate(0, 1.5f);
-    projectileMatrix *= transform2D::Scale(0.2f);
 	return projectileMatrix;
 }
 
@@ -88,7 +87,7 @@ std::vector<std::pair<std::string, glm::mat3>> Tank::getTankParts()
 void Tank::moveTank(const float distance)
 {
 	// TODO no magic numbers
-    tankPos.x = glm::clamp(tankPos.x + distance, 0.0f, 1200.0f);
+    tankPos.x = glm::clamp(tankPos.x + distance, 0.0f, TankWars::screenSize.x);
     
 	glm::vec2 A = { (int)tankPos.x / TankWars::terrainStep * TankWars::terrainStep , 0};
 	A.y = *TankWars::heightMap[A.x / TankWars::terrainStep];
@@ -100,6 +99,7 @@ void Tank::moveTank(const float distance)
 	tankPos.y = A.y + t * (B.y - A.y);
 
 	float targetAngle = atan2(B.y - A.y, B.x - A.x);
+	// Snap if angle is too steep
 	tankAngle = (abs(tankAngle - targetAngle) <= M_PI / 4) ? 
         glm::mix(tankAngle, targetAngle, 0.5f) : 
         targetAngle;
@@ -117,7 +117,15 @@ void Tank::shoot()
 
 void Tank::updateProjectiles(const float deltaTime)
 {
-	for (auto& projectile : projectiles) {
-		projectile.moveProjectile(deltaTime);
-	}
+    std::vector<Projectile> newProjectiles {};
+    for (auto& projectile : projectiles) {
+        projectile.moveProjectile(deltaTime);
+        
+		glm::vec2 pos = projectile.getPos();
+        if (pos.x < 0 || pos.y < 0 || pos.x > TankWars::screenSize.x) {
+			continue;
+        }
+		newProjectiles.push_back(projectile);
+    }
+	projectiles = std::move(newProjectiles);
 }

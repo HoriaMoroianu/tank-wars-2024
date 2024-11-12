@@ -17,14 +17,14 @@ namespace tw
 
 		void moveProjectile(const float deltaTime);
 		glm::mat3 getModelMatrix();
+		glm::vec2 getPos() const { return pos; };
 
 	private:
 		Tank *tank;
 		glm::vec2 pos;
 		glm::vec2 speed;
-		glm::mat3 offsetShootPos;
+		float size;
 
 		const float magnitude = 150;
-		const float size = 0.2f;
 	};
 }
