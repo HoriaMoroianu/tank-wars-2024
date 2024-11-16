@@ -1,8 +1,6 @@
 #include "lab_m1/tank-wars-2024/utils.h"
 #include "lab_m1/tank-wars-2024/tank_wars.h"
 
-#include <iostream>
-
 float tw::TerrainGenerator(const int x)
 {
 	// TODO: randomize mountain position
@@ -13,67 +11,16 @@ float tw::TerrainGenerator(const int x)
         + mountain + 250.f;
 }
 
-void tw::printTerrain()
-{
-	std::vector<float*> &heightMap = TankWars::heightMap;
-    float min = INFINITY;
-    float max = -INFINITY;
-    float sum = 0;
-    for (int i = 1; i < heightMap.size(); i++) {
-        float val1 = *heightMap[i - 1];
-        float val2 = *heightMap[i];
-
-        if (abs(val1 - val2) < min) {
-            min = abs(val1 - val2);
-        }
-        if (abs(val1 - val2) > max) {
-            max = abs(val1 - val2);
-        }
-        std::cout << "Height difference: " << abs(val1 - val2) << std::endl;
-        sum += abs(val1 - val2);
-    }
-    std::cout << "Height difference: ";
-    std::cout << "Min: " << min << " Max: " << max << std::endl;
-    std::cout << "Average: " << sum / heightMap.size() << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-}
-
-void tw::aux(const int index1, const int index2, const float deltaTime)
-{
-	if (index1 < 0 || index1 >= TankWars::heightMap.size() || 
-        index2 < 0 || index2 >= TankWars::heightMap.size()) {
-		return;
-	}
-	float* height1 = TankWars::heightMap[index1];
-	float* height2 = TankWars::heightMap[index2];
-
-	float diff = *height1 - *height2;
-
-    if (abs(diff) <= terrainThreshold) {
-		return;
-	}
-
-    float sign = diff > 0 ? 1 : -1;
-	*height1 -= sign * terrainDiffEpsilon * deltaTime;
-	*height2 += sign * terrainDiffEpsilon * deltaTime;
-}
-
-void tw::flattenTerrain(const float deltaTime)
+void tw::SimulateLandslide(const float deltaTime)
 {
 	std::vector<float*> &heights = TankWars::heightMap;
 
-	std::vector<int> ind;
-    for (int i = 0; i < heights.size(); i++) {
-		ind.push_back(i);
-    }
-
-    std::sort(ind.begin(), ind.end(), [heights](int a, int b) { return *heights[a] > *heights[b]; });
-
-    for (int i : ind) {
-        aux(i, i + 1, deltaTime);
-        aux(i, i - 1, deltaTime);
+	for (int i = 1; i < heights.size() - 1; i++) {
+		float avg = (*heights[i - 1] + *heights[i + 1]) / 2;
+		if (abs(avg - *heights[i]) < terrainThreshold) {
+			continue;
+		}
+		*heights[i] += (avg - *heights[i]) * deltaTime;
 	}
 }
 

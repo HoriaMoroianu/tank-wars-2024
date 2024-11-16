@@ -6,14 +6,19 @@ using namespace tw;
 
 int Tank::instances = 0;
 
-Tank::Tank() 
+Tank::Tank(glm::vec2 pos, glm::vec3 primaryColor, glm::vec3 secondaryColor)
 {
-	Tank::instances++;
-	id = std::to_string(Tank::instances);
-    tankPos = { 600, 150 };
+    Tank::instances++;
+    id = std::to_string(Tank::instances);
+
+	this->primaryColor = primaryColor;
+	this->secondaryColor = secondaryColor;
+	this->tankPos = pos;
+
     tankSize = 30;
     noseAngle = 0;
-	tankAngle = 1;
+    tankAngle = 1;
+	health = 100;
 }
 
 Tank::~Tank()
@@ -24,10 +29,11 @@ std::vector<Mesh*> Tank::getTankMeshes()
 {
     // Order matters! First in list is drawn in front
     std::vector<Mesh*> meshes{};
-    meshes.push_back(CreateTrapeze("tank_body" + id, colorBrown));
-	meshes.push_back(CreateTrapeze("tank_base" + id, colorDarkBrown));
-	meshes.push_back(CreateCircle("tank_head" + id, colorBrown, 31));
-	meshes.push_back(CreateSquare("tank_nose" + id, colorBlack));
+    meshes.push_back(CreateTrapeze("tank_body" + id, primaryColor));
+	meshes.push_back(CreateTrapeze("tank_base" + id, secondaryColor));
+	meshes.push_back(CreateCircle("tank_head" + id, primaryColor, 31));
+    meshes.push_back(CreateSquare("tank_nose" + id, colorBlack));
+    //meshes.push_back(CreateCircle("hitbox" + id, colorBlack));
     return meshes;
 }
 
@@ -81,6 +87,10 @@ std::vector<std::pair<std::string, glm::mat3>> Tank::getTankParts()
     noseMatrix *= transform2D::Translate(0, 0.5f);
     tankParts.push_back({ "tank_nose" + id, noseMatrix });
 
+    // Test hitbox
+    glm::mat3 hitboxMatrix = transformationMatrix;
+    //tankParts.push_back({ "hitbox" + id, hitboxMatrix });
+
 	return tankParts;
 }
 
@@ -98,7 +108,7 @@ void Tank::moveTank(const float distance)
 	float targetAngle = atan2(B.y - A.y, B.x - A.x);
 	// Snap if angle is too steep, else interpolate
     tankAngle = (abs(tankAngle - targetAngle) > tankAngleTol) ? targetAngle :
-        glm::mix(tankAngle, targetAngle, 0.5f);
+        glm::mix(tankAngle, targetAngle, 0.8f);
 
     if (tankPos.y < 0) {
         tankPos.y = 0;

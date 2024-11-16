@@ -9,22 +9,22 @@ namespace tw
 	const glm::vec3 colorDarkBrown = { 0.42f, 0.365f, 0.251f };
 	const glm::vec3 colorBlueSky = { 0.53f, 0.81f, 0.98f };
 	const glm::vec3 colorGreenGrass = { 0.3f, 0.55f, 0.03f };
+	const glm::vec3 colorMillitaryGreen = { 0.3f, 0.36f, 0.25f };
+	const glm::vec3 colorDarkGreen = { 0.1f, 0.2f, 0.1f };
 
 	const glm::vec2 gravity = { 0, 90 };
 
-	const float tankAngleTol = M_PI_4;
+	const float tankAngleTol = M_PI / 6;
 	const float projectileYTol = 0.1f;
 
-	const float terrainThreshold = 7.f;
+	const float terrainThreshold = 0.1f;
 	const float terrainDiffEpsilon = 15.f;
 
 	const int terrainStep = 5;
 	const int blastRadius = 10 * terrainStep;
 
 	float TerrainGenerator(const int x);
-	void printTerrain();
-	void aux(const int index1, const int index2, const float deltaTime);
-	void flattenTerrain(const float deltaTime);
+	void SimulateLandslide(const float deltaTime);
 	Mesh* CreateTrapeze(const std::string name, const glm::vec3 color);
 	Mesh* CreateCircle(const std::string name, const glm::vec3 color, const int subdivisions = 15);
 	Mesh* CreateSquare(const std::string name, const glm::vec3 color);

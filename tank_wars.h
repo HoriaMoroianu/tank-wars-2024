@@ -17,7 +17,6 @@ namespace tw
         ~TankWars();
 
         void Init() override;
-		static void updateTerrainHeight(const int x, const float y);
 
      private:
         void FrameStart() override;
@@ -40,8 +39,8 @@ namespace tw
 		 static glm::vec2 screenSize;
 
      private:
-         class tw::Tank tank1;
-         class tw::Tank tank2;
+         class tw::Tank *tank1;
+         class tw::Tank *tank2;
 
          std::vector<VertexFormat> terrainVertices;
          std::vector<unsigned int> indices;

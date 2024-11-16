@@ -10,7 +10,7 @@ namespace tw
 	class Tank
 	{
 	public:
-		Tank();
+		Tank(glm::vec2 pos, glm::vec3 primaryColor, glm::vec3 secondaryColor);
 		~Tank();
 
 		std::vector<Mesh*> getTankMeshes();
@@ -34,7 +34,11 @@ namespace tw
 		static int instances;
 		std::string id;
 
-		glm::vec2 tankPos;	// TODO put in constructor + colors
+		int health;
+		glm::vec2 tankPos;
+		glm::vec3 primaryColor;
+		glm::vec3 secondaryColor;
+
 		float noseAngle;
 		float tankSize;
 		float tankAngle;
