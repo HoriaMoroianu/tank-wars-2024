@@ -32,10 +32,10 @@ void TankWars::CreateTerrain()
         indices.push_back(i);
     }
 
-    /*Mesh* terrain = new Mesh("terrain");
+    Mesh* terrain = new Mesh("terrain");
     terrain->SetDrawMode(GL_TRIANGLE_STRIP);
-    terrain->InitFromData(terrainVertices, indices);*/
-    //AddMeshToList(terrain);
+    terrain->InitFromData(terrainVertices, indices);
+    AddMeshToList(terrain);
 }
 
 void TankWars::Init()
@@ -83,10 +83,9 @@ void TankWars::Update(float deltaTimeSeconds)
 {
 	if (toggleTerrain) {
         {
-            Mesh* terrain = new Mesh("terrain");
-            terrain->SetDrawMode(GL_TRIANGLE_STRIP);
-            terrain->InitFromData(terrainVertices, indices);
-            RenderMesh2D(terrain, shaders["VertexColor"], glm::mat3(1.0f));
+			flattenTerrain(deltaTimeSeconds);
+			meshes["terrain"]->InitFromData(terrainVertices, indices);
+            RenderMesh2D(meshes["terrain"], shaders["VertexColor"], glm::mat3(1.0f));
         }
 	}
 
@@ -166,6 +165,10 @@ void TankWars::OnKeyPress(int key, int mods)
 
 	if (key == GLFW_KEY_T) {
 		toggleTerrain = !toggleTerrain;
+	}
+
+	if (key == GLFW_KEY_P) {
+		printTerrain();
 	}
 }
 

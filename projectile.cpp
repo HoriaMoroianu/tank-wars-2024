@@ -39,7 +39,6 @@ bool Projectile::checkCollision()
 		return false;
 	}
 
-	// TODO check ofscreen
 	for (int x = A.x - blastRadius; x < B.x + blastRadius; x += terrainStep) {
 		if (x < 0 || x >= TankWars::screenSize.x) {
 			continue;

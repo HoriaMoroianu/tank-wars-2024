@@ -14,10 +14,17 @@ namespace tw
 
 	const float tankAngleTol = M_PI_4;
 	const float projectileYTol = 0.1f;
+
+	const float terrainThreshold = 7.f;
+	const float terrainDiffEpsilon = 15.f;
+
 	const int terrainStep = 5;
 	const int blastRadius = 10 * terrainStep;
 
 	float TerrainGenerator(const int x);
+	void printTerrain();
+	void aux(const int index1, const int index2, const float deltaTime);
+	void flattenTerrain(const float deltaTime);
 	Mesh* CreateTrapeze(const std::string name, const glm::vec3 color);
 	Mesh* CreateCircle(const std::string name, const glm::vec3 color, const int subdivisions = 15);
 	Mesh* CreateSquare(const std::string name, const glm::vec3 color);
