@@ -32,7 +32,9 @@ std::vector<Mesh*> Tank::getTankMeshes()
     meshes.push_back(CreateTrapeze("tank_body" + id, primaryColor));
 	meshes.push_back(CreateTrapeze("tank_base" + id, secondaryColor));
 	meshes.push_back(CreateCircle("tank_head" + id, primaryColor, 31));
-    meshes.push_back(CreateSquare("tank_nose" + id, colorBlack));
+    meshes.push_back(CreateSquare("tank_nose" + id, colorBlack, true));
+    meshes.push_back(CreateSquare("tank_hp_bar" + id, colorWhite));
+    meshes.push_back(CreateSquare("tank_hp" + id, colorWhite, true));
     return meshes;
 }
 
@@ -58,7 +60,6 @@ std::vector<std::pair<std::string, glm::mat3>> Tank::getTankParts()
     if (isDead) {
         return {};
     }
-
     std::vector<std::pair<std::string, glm::mat3>> tankParts{};
     glm::mat3 transformationMatrix = getTransformationMatrix();
 
@@ -89,6 +90,19 @@ std::vector<std::pair<std::string, glm::mat3>> Tank::getTankParts()
     noseMatrix *= transform2D::Scale(0.12f, 0.9f);
     noseMatrix *= transform2D::Translate(0, 0.5f);
     tankParts.push_back({ "tank_nose" + id, noseMatrix });
+
+	// Tank HP Bar
+    glm::mat3 barMatrix = transformationMatrix;
+	barMatrix *= transform2D::Translate(0, 1.5f);
+	barMatrix *= transform2D::Scale(2.f, 0.3f);
+    tankParts.push_back({ "tank_hp_bar" + id, barMatrix });
+
+    // Tank HP
+    glm::mat3 hpMatrix = transformationMatrix;
+    hpMatrix *= transform2D::Translate(-1.f, 1.5f);
+    hpMatrix *= transform2D::Scale(2.f * health / 100, 0.3f);
+    hpMatrix *= transform2D::Translate(0.5f, 0);
+    tankParts.push_back({ "tank_hp" + id, hpMatrix });
 
 	return tankParts;
 }
@@ -147,6 +161,10 @@ void Tank::updateProjectiles(const float deltaTime)
 
 bool Tank::hitByProjectile(const glm::vec2 projectilePos)
 {
+	if (isDead) {
+		return false;
+	}
+
 	// TODO circle collision
     float x = (tankPos.x - projectilePos.x);
 	float y = (tankPos.y - projectilePos.y);
@@ -155,7 +173,6 @@ bool Tank::hitByProjectile(const glm::vec2 projectilePos)
 		return false;
 	}
 	health -= 20;
-	std::cout << "Tank hit! Health: " << health << std::endl;
 	if (health <= 0) {
 		isDead = true;
 	}

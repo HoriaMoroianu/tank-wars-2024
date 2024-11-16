@@ -67,7 +67,7 @@ Mesh* tw::CreateCircle(const std::string name, const glm::vec3 color, const int 
     return circle;
 }
 
-Mesh* tw::CreateSquare(const std::string name, const glm::vec3 color)
+Mesh* tw::CreateSquare(const std::string name, const glm::vec3 color, bool fill)
 {
     std::vector<VertexFormat> vertices
     {
@@ -83,7 +83,11 @@ Mesh* tw::CreateSquare(const std::string name, const glm::vec3 color)
     };
 
     Mesh* square = new Mesh(name);
-    square->SetDrawMode(GL_TRIANGLES);
+	if (fill) {
+        square->SetDrawMode(GL_TRIANGLES);
+    } else {
+		square->SetDrawMode(GL_LINE_LOOP);
+    }
     square->InitFromData(vertices, indices);
     return square;
 }

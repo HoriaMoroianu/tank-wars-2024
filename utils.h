@@ -5,6 +5,7 @@
 namespace tw
 {
 	const glm::vec3 colorBlack = { 0, 0, 0 };
+	const glm::vec3 colorWhite = { 1, 1, 1 };
 	const glm::vec3 colorBrown = { 0.702f, 0.596f, 0.373f };
 	const glm::vec3 colorDarkBrown = { 0.42f, 0.365f, 0.251f };
 	const glm::vec3 colorBlueSky = { 0.53f, 0.81f, 0.98f };
@@ -16,7 +17,7 @@ namespace tw
 
 	const float tankAngleTol = M_PI / 6;
 	const float projectileYTol = 0.1f;
-
+	
 	const float terrainThreshold = 0.1f;
 	const float terrainDiffEpsilon = 15.f;
 
@@ -27,6 +28,6 @@ namespace tw
 	void SimulateLandslide(const float deltaTime);
 	Mesh* CreateTrapeze(const std::string name, const glm::vec3 color);
 	Mesh* CreateCircle(const std::string name, const glm::vec3 color, const int subdivisions = 15);
-	Mesh* CreateSquare(const std::string name, const glm::vec3 color);
+	Mesh* CreateSquare(const std::string name, const glm::vec3 color, bool fill = false);
 	std::pair<glm::vec2, glm::vec2> LocateOnTerrain(const glm::vec2 pos);
 }
