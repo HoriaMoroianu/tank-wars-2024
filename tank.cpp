@@ -19,6 +19,7 @@ Tank::Tank(glm::vec2 pos, glm::vec3 primaryColor, glm::vec3 secondaryColor)
     noseAngle = 0;
     tankAngle = 1;
 	health = 100;
+    trajectoryMesh = CreateTrajectory("trajectory" + id, this);
 }
 
 Tank::~Tank()
@@ -105,6 +106,17 @@ std::vector<std::pair<std::string, glm::mat3>> Tank::getTankParts()
     tankParts.push_back({ "tank_hp" + id, hpMatrix });
 
 	return tankParts;
+}
+
+Mesh* Tank::getTrajectoryMesh()
+{
+	if (isDead) {
+		return nullptr;
+	}
+
+    auto trajectoryData = UpdateTrajectory(trajectoryMesh, this);
+    trajectoryMesh->InitFromData(trajectoryData.first, trajectoryData.second);
+	return trajectoryMesh;
 }
 
 void Tank::moveTank(const float distance)

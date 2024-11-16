@@ -1,6 +1,7 @@
 #pragma once
 
 #include "components/simple_scene.h"
+#include "lab_m1/tank-wars-2024/tank.h"
 
 namespace tw
 {
@@ -24,10 +25,14 @@ namespace tw
 	const int terrainStep = 5;
 	const int blastRadius = 10 * terrainStep;
 
+	const float magnitude = 150;
+
 	float TerrainGenerator(const int x);
 	void SimulateLandslide(const float deltaTime);
 	Mesh* CreateTrapeze(const std::string name, const glm::vec3 color);
 	Mesh* CreateCircle(const std::string name, const glm::vec3 color, const int subdivisions = 15);
 	Mesh* CreateSquare(const std::string name, const glm::vec3 color, bool fill = false);
+	std::pair<std::vector<VertexFormat>, std::vector<unsigned int>> UpdateTrajectory(Mesh* mesh, class Tank* tank);
+	Mesh* CreateTrajectory(const std::string name, class Tank* tank);
 	std::pair<glm::vec2, glm::vec2> LocateOnTerrain(const glm::vec2 pos);
 }

@@ -26,7 +26,5 @@ namespace tw
 		glm::vec2 pos;
 		glm::vec2 speed;
 		float size;
-
-		const float magnitude = 150;
 	};
 }

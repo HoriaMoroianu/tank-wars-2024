@@ -113,6 +113,11 @@ void TankWars::Update(float deltaTimeSeconds)
 	for (auto& part : tankParts2) {
 		RenderMesh2D(meshes[part.first], shaders["VertexColor"], part.second);
 	}
+
+	glLineWidth(1.5f);
+	RenderMesh2D(tank1->getTrajectoryMesh(), shaders["VertexColor"], glm::mat3(1.0f));
+	RenderMesh2D(tank2->getTrajectoryMesh(), shaders["VertexColor"], glm::mat3(1.0f));
+	glLineWidth(1);
 }
 
 

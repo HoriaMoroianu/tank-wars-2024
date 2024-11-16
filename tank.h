@@ -28,6 +28,7 @@ namespace tw
 		float getGunAngle() const { return noseAngle; };
 		float getTankAngle() const { return tankAngle; };
 		float getTankSize() const { return tankSize; };
+		Mesh* getTrajectoryMesh();
 
 	private:
 
@@ -46,6 +47,7 @@ namespace tw
 		float tankSize;
 		float tankAngle;
 
+		Mesh* trajectoryMesh;
 		std::vector<class Projectile> projectiles;
 	};
 }

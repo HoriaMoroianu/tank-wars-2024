@@ -1,5 +1,6 @@
 #include "lab_m1/tank-wars-2024/utils.h"
 #include "lab_m1/tank-wars-2024/tank_wars.h"
+#include <iostream>
 
 float tw::TerrainGenerator(const int x)
 {
@@ -90,6 +91,38 @@ Mesh* tw::CreateSquare(const std::string name, const glm::vec3 color, bool fill)
     }
     square->InitFromData(vertices, indices);
     return square;
+}
+
+std::pair<std::vector<VertexFormat>, std::vector<unsigned int>> tw::UpdateTrajectory(Mesh *mesh, class Tank* tank)
+{
+    std::vector<VertexFormat> vertices;
+    std::vector<unsigned int> indices;
+
+    glm::mat3 tankTansform = tank->getProjectileMatrix();
+    glm::vec2 pos = { tankTansform[2][0], tankTansform[2][1] };
+
+    float gunAngle = tank->getGunAngle() + tank->getTankAngle() + M_PI_2;
+    glm::vec2 speed = glm::vec2{ cos(gunAngle), sin(gunAngle) } * magnitude;
+
+    float x, y, t = 0;
+    do {
+        x = pos.x + speed.x * t;
+        y = pos.y + speed.y * t - 0.5f * gravity.y * t * t;
+        vertices.push_back(VertexFormat(glm::vec3(x, y, 0), colorWhite));
+        indices.push_back(indices.size());
+        t += 0.2f;
+    } while (y > 0);
+
+	return { vertices, indices };
+}
+
+Mesh* tw::CreateTrajectory(const std::string name, class Tank *tank)
+{
+	Mesh* trajectory = new Mesh(name);
+	auto meshData = UpdateTrajectory(trajectory, tank);
+	trajectory->SetDrawMode(GL_LINE_STRIP);
+	trajectory->InitFromData(meshData.first, meshData.second);
+	return trajectory;
 }
 
 std::pair<glm::vec2, glm::vec2> tw::LocateOnTerrain(const glm::vec2 pos)
