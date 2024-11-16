@@ -13,12 +13,20 @@ namespace tw
     class TankWars : public gfxc::SimpleScene
     {
      public:
-        TankWars();
+		 static TankWars* GetInstance() {
+			 if (instance == nullptr) {
+				 instance = new TankWars();
+			 }
+			 return instance;
+		 }
         ~TankWars();
 
         void Init() override;
+		bool checkTankCollision(glm::vec2 projectilePos);
 
      private:
+         TankWars();
+
         void FrameStart() override;
         void Update(float deltaTimeSeconds) override;
         void FrameEnd() override;
@@ -39,6 +47,8 @@ namespace tw
 		 static glm::vec2 screenSize;
 
      private:
+		 static TankWars* instance;
+
          class tw::Tank *tank1;
          class tw::Tank *tank2;
 

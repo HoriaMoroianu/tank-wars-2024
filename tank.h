@@ -22,6 +22,7 @@ namespace tw
 
 		void shoot();
 		void updateProjectiles(const float deltaTime);
+		bool hitByProjectile(const glm::vec2 projectilePos);
 
 		std::vector<class Projectile>& getProjectiles() { return projectiles; };
 		float getGunAngle() const { return noseAngle; };
@@ -35,6 +36,8 @@ namespace tw
 		std::string id;
 
 		int health;
+		bool isDead = false;
+
 		glm::vec2 tankPos;
 		glm::vec3 primaryColor;
 		glm::vec3 secondaryColor;

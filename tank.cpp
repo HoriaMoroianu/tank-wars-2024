@@ -33,7 +33,6 @@ std::vector<Mesh*> Tank::getTankMeshes()
 	meshes.push_back(CreateTrapeze("tank_base" + id, secondaryColor));
 	meshes.push_back(CreateCircle("tank_head" + id, primaryColor, 31));
     meshes.push_back(CreateSquare("tank_nose" + id, colorBlack));
-    //meshes.push_back(CreateCircle("hitbox" + id, colorBlack));
     return meshes;
 }
 
@@ -56,6 +55,10 @@ glm::mat3 Tank::getProjectileMatrix()
 
 std::vector<std::pair<std::string, glm::mat3>> Tank::getTankParts()
 {
+    if (isDead) {
+        return {};
+    }
+
     std::vector<std::pair<std::string, glm::mat3>> tankParts{};
     glm::mat3 transformationMatrix = getTransformationMatrix();
 
@@ -86,10 +89,6 @@ std::vector<std::pair<std::string, glm::mat3>> Tank::getTankParts()
     noseMatrix *= transform2D::Scale(0.12f, 0.9f);
     noseMatrix *= transform2D::Translate(0, 0.5f);
     tankParts.push_back({ "tank_nose" + id, noseMatrix });
-
-    // Test hitbox
-    glm::mat3 hitboxMatrix = transformationMatrix;
-    //tankParts.push_back({ "hitbox" + id, hitboxMatrix });
 
 	return tankParts;
 }
@@ -123,6 +122,9 @@ void Tank::rotateGun(const float angle)
 
 void Tank::shoot()
 {
+    if (isDead) {
+		return;
+    }
 	projectiles.push_back(Projectile(this));
 }
 
@@ -133,11 +135,29 @@ void Tank::updateProjectiles(const float deltaTime)
         projectile.moveProjectile(deltaTime);
 
 		glm::vec2 pos = projectile.getPos();
-        if (pos.x < 0 || pos.y < 0 || pos.x > TankWars::screenSize.x || projectile.checkCollision()) {
+        if (pos.x < 0 || pos.y < 0 || pos.x > TankWars::screenSize.x || 
+            projectile.terrainCollision() || TankWars::GetInstance()->checkTankCollision(pos)) {
 			projectile.~Projectile();
 			continue;
         }
 		newProjectiles.push_back(projectile);
     }
 	projectiles = std::move(newProjectiles);
+}
+
+bool Tank::hitByProjectile(const glm::vec2 projectilePos)
+{
+	// TODO circle collision
+    float x = (tankPos.x - projectilePos.x);
+	float y = (tankPos.y - projectilePos.y);
+
+    if ((x * x + y * y) > tankSize * tankSize) {
+		return false;
+	}
+	health -= 20;
+	std::cout << "Tank hit! Health: " << health << std::endl;
+	if (health <= 0) {
+		isDead = true;
+	}
+	return true;
 }

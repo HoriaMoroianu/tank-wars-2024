@@ -3,6 +3,7 @@
 
 using namespace tw;
 
+TankWars* TankWars::instance = nullptr;
 std::vector<float*> TankWars::heightMap;
 glm::vec2 TankWars::screenSize = glm::vec2(1280, 720);
 
@@ -10,11 +11,9 @@ TankWars::TankWars()
 {
 }
 
-
 TankWars::~TankWars()
 {
 }
-
 
 void TankWars::CreateTerrain()
 {
@@ -69,6 +68,10 @@ void TankWars::Init()
 	AddMeshToList(CreateCircle("projectile", colorBlack));
 }
 
+bool TankWars::checkTankCollision(glm::vec2 projectilePos)
+{
+	return (tank1->hitByProjectile(projectilePos) || tank2->hitByProjectile(projectilePos));
+}
 
 void TankWars::FrameStart()
 {

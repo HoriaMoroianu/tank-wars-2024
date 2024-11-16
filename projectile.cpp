@@ -24,7 +24,7 @@ void Projectile::moveProjectile(const float deltaTime)
 	speed -= gravity * deltaTime;
 }
 
-bool Projectile::checkCollision()
+bool Projectile::terrainCollision()
 {
 	auto coords = LocateOnTerrain(pos);
 	glm::vec2 A = coords.first;
