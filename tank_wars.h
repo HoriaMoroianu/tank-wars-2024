@@ -22,7 +22,7 @@ namespace tw
         ~TankWars();
 
         void Init() override;
-		bool checkTankCollision(glm::vec2 projectilePos);
+        bool checkTankCollision(glm::vec2 projectilePos, float projectileSize);
 
      private:
          TankWars();

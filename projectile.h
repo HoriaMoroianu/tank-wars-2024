@@ -20,6 +20,7 @@ namespace tw
 
 		glm::mat3 getModelMatrix();
 		glm::vec2 getPos() const { return pos; };
+		float getSize() const { return size; };
 
 	private:
 		Tank *tank;

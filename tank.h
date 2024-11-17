@@ -22,7 +22,7 @@ namespace tw
 
 		void shoot();
 		void updateProjectiles(const float deltaTime);
-		bool hitByProjectile(const glm::vec2 projectilePos);
+		bool hitByProjectile(const glm::vec2 projectilePos, const float projectileSize);
 
 		std::vector<class Projectile>& getProjectiles() { return projectiles; };
 		float getGunAngle() const { return noseAngle; };

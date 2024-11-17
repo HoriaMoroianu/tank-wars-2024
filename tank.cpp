@@ -161,8 +161,11 @@ void Tank::updateProjectiles(const float deltaTime)
         projectile.moveProjectile(deltaTime);
 
 		glm::vec2 pos = projectile.getPos();
+		float size = projectile.getSize();
+
         if (pos.x < 0 || pos.y < 0 || pos.x > TankWars::screenSize.x || 
-            projectile.terrainCollision() || TankWars::GetInstance()->checkTankCollision(pos)) {
+            TankWars::GetInstance()->checkTankCollision(pos, size) ||
+            projectile.terrainCollision()) {
 			projectile.~Projectile();
 			continue;
         }
@@ -171,17 +174,17 @@ void Tank::updateProjectiles(const float deltaTime)
 	projectiles = std::move(newProjectiles);
 }
 
-bool Tank::hitByProjectile(const glm::vec2 projectilePos)
+bool Tank::hitByProjectile(const glm::vec2 projectilePos, const float projectileSize)
 {
 	if (isDead) {
 		return false;
 	}
 
-	// TODO circle collision
-    float x = (tankPos.x - projectilePos.x);
-	float y = (tankPos.y - projectilePos.y);
+	float dx = tankPos.x - projectilePos.x;
+	float dy = tankPos.y - projectilePos.y;
+    float d = sqrt(dx * dx + dy * dy);
 
-    if ((x * x + y * y) > tankSize * tankSize) {
+	if (d > tankSize + projectileSize) {
 		return false;
 	}
 	health -= 20;

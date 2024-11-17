@@ -68,9 +68,10 @@ void TankWars::Init()
 	AddMeshToList(CreateCircle("projectile", colorBlack));
 }
 
-bool TankWars::checkTankCollision(glm::vec2 projectilePos)
+bool TankWars::checkTankCollision(glm::vec2 projectilePos, float projectileSize)
 {
-	return (tank1->hitByProjectile(projectilePos) || tank2->hitByProjectile(projectilePos));
+	return (tank1->hitByProjectile(projectilePos, projectileSize) || 
+			tank2->hitByProjectile(projectilePos, projectileSize));
 }
 
 void TankWars::FrameStart()
