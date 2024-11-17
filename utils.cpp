@@ -4,7 +4,6 @@
 
 float tw::TerrainGenerator(const int x)
 {
-	// TODO: randomize mountain position
 	float mountain = 250.f * pow(M_E, -pow(x - 900, 2) / 20000.f);
     return 50 * sin(M_PI / 600 * x) +
         25 * sin(M_PI / 300 * x)
