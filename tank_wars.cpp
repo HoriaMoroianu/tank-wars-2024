@@ -9,6 +9,8 @@ glm::vec2 TankWars::screenSize = glm::vec2(1280, 720);
 
 TankWars::TankWars()
 {
+	tank1 = nullptr;
+	tank2 = nullptr;
 }
 
 TankWars::~TankWars()

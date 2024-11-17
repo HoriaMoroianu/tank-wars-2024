@@ -10,7 +10,7 @@ Projectile::Projectile(Tank *tank) : tank(tank)
 	pos = { tankTansform[2][0], tankTansform[2][1] };
 
 	float gunAngle = tank->getGunAngle() + tank->getTankAngle() + M_PI_2;
-	speed = glm::vec2{ cos(gunAngle), sin(gunAngle) } * magnitude;
+	speed = glm::vec2{ cos(gunAngle), sin(gunAngle) } * projectileMagnitude;
 	size = 0.2f * tank->getTankSize();
 }
 
@@ -44,6 +44,7 @@ bool Projectile::terrainCollision()
 			continue;
 		}
 
+		// Extracting lower Y from circle equation: (x - I.x)^2 + (y - I.y)^2 = blastRadius^2
 		float temp = sqrt(blastRadius * blastRadius - (x - I.x) * (x - I.x));
 		if (std::isnan(temp)) {
 			continue;

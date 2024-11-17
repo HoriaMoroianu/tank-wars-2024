@@ -5,7 +5,7 @@
 float tw::TerrainGenerator(const int x)
 {
 	// TODO: randomize mountain position
-	float mountain = 250.f * pow(M_E, -pow(x - 200, 2) / 20000.f);
+	float mountain = 250.f * pow(M_E, -pow(x - 900, 2) / 20000.f);
     return 50 * sin(M_PI / 600 * x) +
         25 * sin(M_PI / 300 * x)
         + 10 * sin(M_PI / 150 * x)
@@ -16,6 +16,7 @@ void tw::SimulateLandslide(const float deltaTime)
 {
 	std::vector<float*> &heights = TankWars::heightMap;
 
+    // Laplacian smoothing
 	for (int i = 1; i < heights.size() - 1; i++) {
 		float avg = (*heights[i - 1] + *heights[i + 1]) / 2;
 		if (abs(avg - *heights[i]) < terrainThreshold) {
@@ -102,7 +103,7 @@ std::pair<std::vector<VertexFormat>, std::vector<unsigned int>> tw::UpdateTrajec
     glm::vec2 pos = { tankTansform[2][0], tankTansform[2][1] };
 
     float gunAngle = tank->getGunAngle() + tank->getTankAngle() + M_PI_2;
-    glm::vec2 speed = glm::vec2{ cos(gunAngle), sin(gunAngle) } * magnitude;
+    glm::vec2 speed = glm::vec2{ cos(gunAngle), sin(gunAngle) } * projectileMagnitude;
 
     float x, y, t = 0;
     do {

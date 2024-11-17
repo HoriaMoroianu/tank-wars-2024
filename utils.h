@@ -18,14 +18,12 @@ namespace tw
 
 	const float tankAngleTol = M_PI / 6;
 	const float projectileYTol = 0.1f;
+	const float projectileMagnitude = 150.f;
 	
 	const float terrainThreshold = 0.1f;
-	const float terrainDiffEpsilon = 15.f;
 
 	const int terrainStep = 5;
 	const int blastRadius = 10 * terrainStep;
-
-	const float magnitude = 150;
 
 	float TerrainGenerator(const int x);
 	void SimulateLandslide(const float deltaTime);
