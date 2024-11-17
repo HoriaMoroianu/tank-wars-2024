@@ -25,7 +25,10 @@ namespace tw
         bool checkTankCollision(glm::vec2 projectilePos, float projectileSize);
 
      private:
-         TankWars();
+        TankWars();
+        void CreateTerrain();
+        void DrawTankAndProjectiles(const float deltaTime, Tank* tank);
+        void InitTank(Tank** tank, glm::vec2 pos, glm::vec3 primaryColor, glm::vec3 secondaryColor);
 
         void FrameStart() override;
         void Update(float deltaTimeSeconds) override;
@@ -39,8 +42,6 @@ namespace tw
         void OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods) override;
         void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
         void OnWindowResize(int width, int height) override;
-
-        void CreateTerrain();
 
     public:
          static std::vector<float *> heightMap;
@@ -56,8 +57,5 @@ namespace tw
          std::vector<unsigned int> indices;
 
          const int terrainOffset = 30;
-
-		 // TODO: remove this
-		 bool toggleTerrain = true;
     };
 }   // namespace m1

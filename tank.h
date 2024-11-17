@@ -31,8 +31,6 @@ namespace tw
 		Mesh* getTrajectoryMesh();
 
 	private:
-
-	private:
 		static int instances;
 		std::string id;
 

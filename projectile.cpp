@@ -44,7 +44,8 @@ bool Projectile::terrainCollision()
 			continue;
 		}
 
-		// Extracting lower Y from circle equation: (x - I.x)^2 + (y - I.y)^2 = blastRadius^2
+		// Extracting lower Y from circle equation: 
+		// (x - I.x)^2 + (y - I.y)^2 = blastRadius^2
 		float temp = sqrt(blastRadius * blastRadius - (x - I.x) * (x - I.x));
 		if (std::isnan(temp)) {
 			continue;
